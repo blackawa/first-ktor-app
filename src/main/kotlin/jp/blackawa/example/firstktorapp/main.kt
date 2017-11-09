@@ -12,21 +12,24 @@ import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.jetty.Jetty
+import jp.blackawa.example.firstktorapp.infrastructure.Database
 import jp.blackawa.example.firstktorapp.view.index
 import jp.blackawa.example.firstktorapp.view.style
 
 fun main(args: Array<String>) {
-    embeddedServer(Jetty, port = 8080) {
+    val server = embeddedServer(Jetty, 8080) {
+        val database = Database()
         install(DefaultHeaders)
         install(CallLogging)
         install(Routing) {
             get("/") {
-                call.respondHtml(HttpStatusCode.OK, index())
+                database.findAllEntries()
+                call.respondHtml(HttpStatusCode.OK, index(database.findAllEntries()))
             }
             get("/style.css") {
                 call.respondText(style(), ContentType.Text.CSS)
             }
         }
-    }.start(wait = true)
+    }
+    server.start(wait = true)
 }
-

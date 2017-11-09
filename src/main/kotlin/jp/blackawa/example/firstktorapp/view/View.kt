@@ -1,25 +1,30 @@
 package jp.blackawa.example.firstktorapp.view
 
+import jp.blackawa.example.firstktorapp.infrastructure.Entry
 import kotlinx.html.*
 
-fun index(): HTML.() -> Unit = {
+fun index(entries: List<Entry>): HTML.() -> Unit = {
     head {
         title {
-            +"Html Application"
+            +"Sample blog application"
         }
         link("/style.css", "stylesheet")
     }
     body {
         h1 {
-            +"Sample Application with HTML builders."
+            +"Sample blog"
         }
-        widget {
-            +"Widgets are just functions."
+        ul {
+            entries.forEach { e ->
+                widget {
+                    +e.title
+                }
+            }
         }
     }
 }
 
-fun FlowContent.widget(body: FlowContent.() -> Unit) {
-    div { body() }
+fun UL.widget(body: FlowContent.() -> Unit) {
+    li { body() }
 }
 
