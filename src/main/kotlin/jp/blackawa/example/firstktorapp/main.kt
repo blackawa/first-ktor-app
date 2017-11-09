@@ -1,16 +1,18 @@
 package jp.blackawa.example.firstktorapp
 
-import azadev.kotlin.css.Stylesheet
-import kotlinx.html.*
-import io.ktor.application.*
-import io.ktor.features.*
-import io.ktor.html.*
+import io.ktor.application.call
+import io.ktor.application.install
+import io.ktor.features.CallLogging
+import io.ktor.features.DefaultHeaders
+import io.ktor.html.respondHtml
 import io.ktor.http.ContentType
-import io.ktor.pipeline.*
+import io.ktor.http.HttpStatusCode
 import io.ktor.response.respondText
-import io.ktor.routing.*
+import io.ktor.routing.Routing
+import io.ktor.routing.get
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.jetty.Jetty
+import jp.blackawa.example.firstktorapp.view.index
 import jp.blackawa.example.firstktorapp.view.style
 
 fun main(args: Array<String>) {
@@ -19,34 +21,12 @@ fun main(args: Array<String>) {
         install(CallLogging)
         install(Routing) {
             get("/") {
-                call.respondHtml {
-                    head {
-                        title {
-                            +"Html Application"
-                        }
-                        link("/style.css", "stylesheet")
-                    }
-                    body {
-                        h1 {
-                            +"Sample Application with HTML builders."
-                        }
-                        widget {
-                            +"Widgets are just functions."
-                        }
-                    }
-                }
+                call.respondHtml(HttpStatusCode.OK, index())
             }
             get("/style.css") {
-                call.respondText(
-                    style(),
-                    ContentType.Text.CSS
-                )
+                call.respondText(style(), ContentType.Text.CSS)
             }
         }
     }.start(wait = true)
-}
-
-fun FlowContent.widget(body: FlowContent.() -> Unit) {
-    div { body() }
 }
 
